@@ -35,11 +35,14 @@ namespace GlobalSearch {
  *      new unit-cell volume =    107.95826 a.u.^3 (    15.99776 Ang^3 )
  *      density =      0.31139 g/cm^3
  *
- * CELL_PARAMETERS (alat=  1.00000000)
+ * CELL_PARAMETERS (alat=  1.00000000) 
  *    3.874174633  -0.256713398   0.047571808
  *    0.960054464   5.090350807   0.072713918
  *    0.694196504   1.552402373   5.434153937
- *
+ * or can be
+ * CELL_PARAMETERS bohr
+ * or
+ * CELL_PARAMETERS angstrom 
  * ATOMIC_POSITIONS (crystal)
  * O       -0.238428760   0.078189145   0.088947201
  * O        0.736946363   0.004722226   0.509718838
@@ -75,24 +78,24 @@ bool PwscfFormat::read(Structure* s, const QString& filename)
     // This section should contain the final cell and final coordinates
     if (strstr(line.c_str(), "Begin final coordinates")) {
       getline(ifs, line);
-      while (!strstr(line.c_str(), "End final coordinates")) {
+      while (!strstr(line.c_str(), "End final coordinates")) {	
+	double scalingFactor ;
         if (strstr(line.c_str(), "CELL_PARAMETERS")) {
-          // Get the scaling factor and then the cell matrix
-          lineSplit = split(line, '=');
-          double scalingFactor = 1.0;
-
-          if (lineSplit.size() < 2) {
-            qDebug() << "Warning: in PWSCF output, alat was not found.";
-            qDebug() << "Assuming alat to be 1.0";
-          } else {
+	  if (strstr(line.c_str(), "bohr")) {
+	    scalingFactor = 0.52917706;}
+	  else if (strstr(line.c_str(), "angstrom")) {
+	    scalingFactor = 1.0;}
+	  else if (strstr(line.c_str(), "alat")) {
+	    // Get the scaling factor and then the cell matrix
+	    lineSplit = split(line, '=');
             std::string alatLine = trim(lineSplit[1]);
             replaceAll(alatLine, ")", "");
-            scalingFactor = atof(alatLine.c_str());
-          }
-
-          // Get the cell matrix
-          for (unsigned short i = 0; i < 3; ++i) {
-            getline(ifs, line);
+	    scalingFactor = atof(alatLine.c_str())*0.52917706;
+	  }
+	
+	  // Get the cell matrix
+	  for (unsigned short i = 0; i < 3; ++i) {
+	    getline(ifs, line);
             lineSplit = split(line, ' ');
             if (lineSplit.size() != 3) {
               qDebug() << "Error reading the cell matrix in PWSCF output!"
@@ -105,7 +108,7 @@ bool PwscfFormat::read(Structure* s, const QString& filename)
           }
 
           cellFound = true;
-        }
+	}
         // Atomic coords
         if (strstr(line.c_str(), "ATOMIC_POSITIONS")) {
           getline(ifs, line);
