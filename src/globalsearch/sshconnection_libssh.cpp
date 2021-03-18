@@ -213,7 +213,7 @@ bool SSHConnectionLibSSH::connectSession(bool throwExceptions)
   int verbosity = SSH_LOG_NOLOG;
   // int verbosity = SSH_LOG_PROTOCOL;
   // int verbosity = SSH_LOG_PACKET;
-  int timeout = 15; // timeout in sec
+  int timeout = 600; // timeout in sec
 
   ssh_options_set(m_session, SSH_OPTIONS_HOST, m_host.toStdString().c_str());
   ssh_options_set(m_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
@@ -435,8 +435,8 @@ bool SSHConnectionLibSSH::_execute(const QString& command, QString& stdout_str,
   channel_send_eof(channel);
   channel_close(channel);
 
-  // 5 second timeout
-  int timeout = 15;
+  // 5 second timeout--longer
+  int timeout = 600;
   while (channel_get_exit_status(channel) == -1 && timeout >= 0) {
 #ifdef SSH_CONNECTION_LIBSSH_DEBUG
     qDebug() << "Waiting for server to close channel...";
@@ -1022,7 +1022,7 @@ bool SSHConnectionLibSSH::addKeyToKnownHosts(const QString& host,
 
   // Set options
   int verbosity = SSH_LOG_NOLOG;
-  int timeout = 15; // timeout in sec
+  int timeout = 600; // timeout in sec longer
 
   ssh_options_set(session, SSH_OPTIONS_HOST, host.toStdString().c_str());
   ssh_options_set(session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);

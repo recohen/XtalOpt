@@ -142,7 +142,7 @@ bool SSHConnectionCLI::executeSSH(const QString& command,
   fullArgs << args;
 
   proc.start("ssh", fullArgs);
-  int timeout_ms = 60000; // one minute
+  int timeout_ms = 600000; // ten minute
 
   if (!proc.waitForStarted(timeout_ms)) {
     qWarning() << QString("Failed to start ssh command with args \"%1\" "
@@ -211,7 +211,7 @@ bool SSHConnectionCLI::executeSCPTo(const QString& source, const QString& dest,
                 .arg(dest);
 
   proc.start("scp", fullArgs);
-  int timeout_ms = 60000; // one minute
+  int timeout_ms = 600000; // 10 minutes
 
   if (!proc.waitForStarted(timeout_ms)) {
     qWarning() << QString("Failed to start scp command with args \"%1\" "
@@ -278,7 +278,7 @@ bool SSHConnectionCLI::executeSCPFrom(const QString& source,
   fullArgs << dest;
 
   proc.start("scp", fullArgs);
-  int timeout_ms = 60000; // one minute
+  int timeout_ms = 600000; // 10 minutes
 
   if (!proc.waitForStarted(timeout_ms)) {
     qWarning() << QString("Failed to start scp command with args \"%1\" "

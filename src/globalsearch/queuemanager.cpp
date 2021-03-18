@@ -95,7 +95,7 @@ QueueManager::~QueueManager()
   for (QList<Tracker *>::iterator it = trackers.begin(),
                                   it_end = trackers.end();
        it != it_end; it++) {
-    timeout = 10;
+    timeout = 100;
     while (timeout > 0 && (*it)->size()) {
       qDebug() << "Spinning on QueueManager handler trackers to empty...";
       GS_SLEEP(1);
@@ -104,7 +104,7 @@ QueueManager::~QueueManager()
   }
 
   // Wait for m_requestedStructures to == 0
-  timeout = 15;
+  timeout = 150;
   while (timeout > 0 && m_requestedStructures > 0) {
     qDebug() << "Waiting for structure generation threads to finish...";
     GS_SLEEP(1);

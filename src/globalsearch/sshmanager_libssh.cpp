@@ -67,7 +67,7 @@ SSHManagerLibSSH::~SSHManagerLibSSH()
   QMutexLocker locker(&m_lock);
   START;
 
-  int timeout = 30;
+  int timeout = 300;
   QList<SSHConnectionLibSSH*>::iterator it;
   for (it = m_conns.begin(); it != m_conns.end(); it++) {
     while ((*it)->inUse() && timeout >= 0) {
